@@ -1,0 +1,143 @@
+<html>
+    <head><title>GODTITLE</title></head>
+<body>
+
+<textarea spellcheck="false" id="resizeme"></textarea>
+
+</body>
+
+
+
+
+
+<style>
+@font-face {
+    font-family: Bitstream Vera Sans Mono Bold;
+    src: url('VeraMoBd.eot?') format('embedded-opentype'),
+    url('VeraMoBd.ttf') format('truetype');
+}
+
+
+body    {background: #00FF00;}
+
+textarea {  
+    
+    
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            background: #00FF00;
+            outline: none !important;
+            overflow:hidden;
+            width:100%;
+            height:100%; 
+            border: none;
+            resize: none;
+            color: #FFFFFF;
+            font-family: Bitstream Vera Sans Mono Bold;
+            font-size:100px;
+            text-shadow: 0.05em 0.05em #000000;
+            }
+            
+            
+</style>
+
+
+<script src="jquery-2.1.4.js"></script>
+<script>
+var fs = 10;
+var nextBlur=Date.now();
+var textAreaBlurred=true;
+var prevStringSize=0;
+var fourByThree=false;
+
+
+$(document).ready(function() {
+
+
+    
+	$(window).resize(function() { //detect if the window is resized, if so, resize the text
+        resizeTextbox(true);
+	});
+
+
+    $( "textarea#resizeme" ).keyup(function() {
+        resizeTextbox();
+      });
+
+
+    $( "textarea#resizeme" ).dblclick(function() { //switch aspect ratios
+        if (fourByThree==false){
+            $("textarea#resizeme").css("width", $('textarea#resizeme').height() * (4/3)  + "px");
+            fourByThree=true;
+        }else{        
+         $("textarea#resizeme").css("width", "100%");
+         fourByThree=false;
+        }
+    resizeTextbox(true);    
+    });
+
+
+
+    textAreaElement = document.getElementById("resizeme");
+    setInterval(function(){
+        //console.log ("FS = " + fs);
+        $("textarea#resizeme").css("font-size", fs-5 + "px");
+        if ( Date.now()>nextBlur && textAreaBlurred==false ){
+            $('textarea#resizeme').blur();
+            textAreaBlurred=true;
+        }
+
+
+    }, 250); // every quarter second, set the font size
+
+    fs = Math.round($('textarea#resizeme').width()*0.6); //initial font size guess
+    $("textarea#resizeme").css("font-size", fs + "px");
+
+    $('textarea#resizeme').focus();
+    
+
+});
+
+
+
+resizeTextbox = function (forceResize) {
+
+    textAreaBlurred=false;
+    nextBlur=Date.now()+3000; //get rid of the cursor in 3 seconds of inactivity
+
+    if (textAreaElement.clientHeight < textAreaElement.scrollHeight){  //vertical scrollbar detected. Decrease font size until it fits
+
+        while(textAreaElement.clientHeight < textAreaElement.scrollHeight){ 
+            fs--;
+            //console.log("Vertical scrollbar. Resizing to " + fs);
+            $("textarea#resizeme").css("font-size", fs + "px");
+        }
+
+
+    }
+    else {
+        //console.log("No vertical scrollbar.");
+        if(prevStringSize > $('textarea#resizeme').val().length || forceResize==true){ //only increase font size if you're erasing characters
+
+            while (textAreaElement.clientHeight >= textAreaElement.scrollHeight) { //no scrollbar
+                fs++;
+                $("textarea#resizeme").css("font-size", fs + "px");
+            }
+        }
+
+    }
+
+    prevStringSize =  $('textarea#resizeme').val().length;
+
+
+    //    var contents = $('textarea#resizeme').val();
+    //    console.log(contents);
+    //    var charWidth = Math.round(       (      ($('textarea#resizeme').width()-100) / contents.length) *(1/0.6) ) ; //font size is proportional to the width of the screen
+    //	$("textarea#resizeme").css("font-size", charWidth + "px");
+
+
+
+}
+    
+</script>
