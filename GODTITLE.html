@@ -52,16 +52,37 @@ var prevStringSize=0;
 var fourByThree=false;
 
 
+var keepCursorAlive = function(){
+        textAreaBlurred=false;
+        nextBlur=Date.now()+3000; //get rid of the cursor in 3 seconds of inactivity
+   
+   };
+
 $(document).ready(function() {
 
 
+    $(window).keydown(function() {
+    $('textarea#resizeme').focus(); //If outside the text box, send focus there. Works somehow.
+
+    });
     
 	$(window).resize(function() { //detect if the window is resized, if so, resize the text
         resizeTextbox(true);
 	});
 
 
+    $('textarea#resizeme').focus(function(){
+        keepCursorAlive();
+        });
+
+
+    $( "textarea#resizeme" ).keydown(function() {
+        keepCursorAlive(); 
+      });
+
+
     $( "textarea#resizeme" ).keyup(function() {
+        keepCursorAlive(); 
         resizeTextbox();
       });
 
@@ -79,17 +100,20 @@ $(document).ready(function() {
 
 
 
+
+
     textAreaElement = document.getElementById("resizeme");
     setInterval(function(){
-        //console.log ("FS = " + fs);
-        $("textarea#resizeme").css("font-size", fs-5 + "px");
-        if ( Date.now()>nextBlur && textAreaBlurred==false ){
+
+        $("textarea#resizeme").css("font-size", fs-5 + "px"); 
+        
+        if ( Date.now()>nextBlur && textAreaBlurred==false && $('textarea#resizeme').val().length>0){
             $('textarea#resizeme').blur();
             textAreaBlurred=true;
         }
 
 
-    }, 250); // every quarter second, set the font size
+    }, 250); // every quarter second, set the font size and check to see if it's time to blur the textbox
 
     fs = Math.round($('textarea#resizeme').width()*0.6); //initial font size guess
     $("textarea#resizeme").css("font-size", fs + "px");
@@ -102,9 +126,6 @@ $(document).ready(function() {
 
 
 resizeTextbox = function (forceResize) {
-
-    textAreaBlurred=false;
-    nextBlur=Date.now()+3000; //get rid of the cursor in 3 seconds of inactivity
 
     if (textAreaElement.clientHeight < textAreaElement.scrollHeight){  //vertical scrollbar detected. Decrease font size until it fits
 
