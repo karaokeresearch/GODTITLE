@@ -1,4 +1,8 @@
-# HOW TO USE
+##GODTITLE
+
+Very simple TV titling system.  Use "D" to advance and "A" to recede through the stack of slides.
+
+##Godtitle classic:
 * OPEN GODTITLE.html
 * FULLSCREEN YOUR BROWSER
 * START TYPING

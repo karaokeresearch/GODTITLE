@@ -1,0 +1,332 @@
+<html>
+    <head><title>GODTITLESTACKVIEWERRRRRRRRR</title></head>
+
+<body>
+
+<script src="howler.js"></script>
+<script src="jquery-2.1.4.js"></script>
+<script src="jquery.textfill.js"></script>
+<script src="slides.js"></script>
+
+
+
+
+<style>
+
+@font-face {
+    font-family: Bitstream Vera Sans Mono Bold;
+    src: url('VeraMoBd.eot?') format('embedded-opentype'),
+    url('VeraMoBd.ttf') format('truetype');
+}
+
+
+#slidebox
+{
+   
+    width: 70%;
+    height: 100%;
+    position:relative; 
+    top: 0px; 
+    left: 15%; 
+}
+
+
+#videocontrol
+{
+    width:  100%;
+    height: 100%;
+}
+
+
+#photobox
+{
+   
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center; 
+    display: none;
+    width:  100%;
+    height: 100%;
+}
+
+#innertext
+{
+    color: #FFFFFF;
+    font-family: Bitstream Vera Sans Mono Bold;
+    text-shadow: 0.05em 0.05em #000000; 
+}
+
+
+#thirdleft
+{
+    color: #FFFFFF;
+    font-family: Bitstream Vera Sans Mono Bold;
+    text-shadow: 0.05em 0.05em #000000; 
+}
+
+#thirdright
+{
+    color: #FFFFFF;
+    font-family: Bitstream Vera Sans Mono Bold;
+    text-shadow: 0.05em 0.05em #000000; 
+}
+
+
+
+
+#bigtext
+{
+   
+    width: 100%;
+    height: 100%;
+    display: none;
+
+}
+
+
+
+
+
+#lowerthird
+{
+    width: 100%;
+    height: 100%;
+    display: none;    
+}
+
+
+
+
+#div1 { width: 50%; height: 80%; float: left;}
+#div2 { width: 50%; height: 80%; float: left;}
+#div3 { width: 50%; height: 20%; float: left;}
+#div4 { width: 50%; height: 20%; float: left;  text-align: right;}
+
+
+
+html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0;  
+    background-color: #00FF00;
+    }
+
+
+    
+</style>
+
+
+
+<div id="slidebox">
+    <div id="photobox"><img id="thepicture"></div>
+    <div id="bigtext"><span id="innertext"></span></div>
+    <div id="lowerthird"> 
+        <div id="div1">
+        </div>
+        <div id="div2">
+        </div>
+        <div id="div3">
+          <span id="thirdleft"></span>
+        </div>
+        <div id="div4">
+            <span id="thirdright"></span>
+        </div>
+    
+    </div>
+    <div id="singalongframe" style="position:relative; top: 40%; left: 12.5%;">
+       <!-- <iframe frameborder="0" id="singalong" style="background-color: #FFFFFF" scrolling="yes" width="75%" height="60%" src="as.s">  -->
+    </div>
+
+    
+
+    <video id="videocontrol">
+      
+    </video>
+</div>
+
+</body>
+
+
+
+
+<script>
+
+var currentSlide;
+var hitOnce = []; //determines if pedal has become lifted before allowing another keystroke
+
+var sound = new Howl({});
+var video = $('#videocontrol').get(0);
+var pageBGcolor = "#00FF00";
+var iFramePresent=false;
+
+var whee = function(){
+    alert();
+}
+
+var hideAllDivs= function() {
+    $("#slidebox").css("width", '70%'); //if video playing set these 
+    $("#slidebox").css("left", "15%");  //two lines to 16:9, set them back to 4:3
+
+
+    $("#bigtext").hide();
+    $("#lowerthird").hide();
+    $("#photobox").hide();
+    $("#videocontrol").hide();
+    $("#singalongframe").html('');
+    $("#singalongframe").hide();
+    
+    iFramePresent=false;
+    
+
+
+};
+
+var executeSlide = function(slideNum) {
+    sound.unload()
+    video.pause()
+    console.log(slideNum, slides.stack[slideNum]);
+    localStorage.setItem("currentSlide",slideNum); //set local storage
+    hideAllDivs();    
+
+
+    if (slides.stack[slideNum].type === "singalong"){
+        $("#singalongframe").show();
+        $("#singalongframe").html('<iframe frameborder="0" id="singalong" style="background-color: #FFFFFF" src="'+ slides.stack[slideNum].url +'" scrolling="yes" width="75%" height="60%">');
+        iFramePresent=true;
+        setTimeout(function(){document.getElementById('singalong').focus();},200);
+    }
+
+
+    
+    if (slides.stack[slideNum].type === "bigtext"){
+        $("#bigtext").show();
+        $("#innertext").html(slides.stack[slideNum].text);
+        $("#innertext").css("font-size","1px"); //terrible hack. please fix, somebody with more brains than me
+        setTimeout(function(){
+        
+                $("#bigtext").textfill({maxFontPixels    : -1, 
+                                        debug: false});
+        },200);  //GOD frowns upon this.
+              
+
+        
+    }
+  
+      if (slides.stack[slideNum].type === "lowerthird"){
+        $("#lowerthird").show();
+        $("#thirdleft").html(slides.stack[slideNum].text);
+        $("#thirdleft").css("font-size","1px"); //terrible hack. please fix, somebody with more brains than me       
+
+        $("#thirdright").html(slides.showname);
+        $("#thirdright").css("font-size","1px"); //terrible hack. please fix, somebody with more brains than me       
+
+
+        setTimeout(function(){
+                $("#div3").textfill({maxFontPixels    : -1, 
+                                        debug: false,
+                                        });
+        },200);  //GOD frowns upon this.
+
+        setTimeout(function(){
+                $("#div4").textfill({maxFontPixels    : -1, 
+                                        debug: false,
+                                        });
+        },200);  //GOD frowns upon this.
+
+
+
+
+
+
+    }
+      if (slides.stack[slideNum].type === "video"){
+        
+        
+        $("#slidebox").css("width", '100%');  //make the video player full screen
+        $("#slidebox").css("left", "0px");
+        console.log(slides.stack[slideNum].video);
+        $("#videocontrol").show();
+        video.src = slides.stack[slideNum].video;
+        video.load();
+        video.play();        
+        
+    }
+
+      if (slides.stack[slideNum].type === "image"){
+      $("#photobox").css("background-image", 'url("'+slides.stack[slideNum].image +'")');
+      $("#photobox").show();
+      if (slides.stack[slideNum].wide === true){
+        $("#slidebox").css("width", '100%');  //make the video player full screen
+        $("#slidebox").css("left", "0px");
+      }  
+   };
+
+  
+ 
+    if (slides.stack[slideNum].audio){
+        sound = new Howl({
+            urls: [slides.stack[slideNum].audio],
+            buffer:true,
+            autoplay:true
+        });
+    }
+
+    if (slides.stack[slideNum].bgcolor){
+        $('body').css("background-color", slides.stack[slideNum].bgcolor);
+    }
+    else{
+        $('body').css("background-color", pageBGcolor );
+    }
+
+console.log("checking");
+
+    
+};
+
+
+$( document ).ready(function() {
+
+    
+    currentSlide=Number(localStorage.getItem("currentSlide")); //read current slide from local storage
+
+    if (currentSlide===null) {currentSlide=0};         
+    if (currentSlide<0 || currentSlide+1 > slides.stack.length){currentSlide=0} //if item is out of range, it was saved wrong. Reset localstorage's slide to 0.
+   
+	executeSlide(currentSlide);
+	
+	
+	$(document).on('keydown', function(event) { //listener to detect keystrokes but force indvidual presses for each change
+	    console.log("parent keypress");
+	 if (iFramePresent===false){
+	    console.log("iframepresent false");
+		actualKey = (event.which);
+		if (hitOnce[actualKey] !== 1) {
+			if (actualKey === 65) { //A left
+				currentSlide--;
+				if (currentSlide<0 ){currentSlide= slides.stack.length-1}
+				
+				executeSlide(currentSlide);
+			}
+			if (actualKey === 68) { //D right
+				currentSlide++;
+				if (currentSlide+1 > slides.stack.length){currentSlide=0}
+                
+				executeSlide(currentSlide);
+
+            }	
+		hitOnce[actualKey] = 1;
+		}
+	}
+	}); 
+	$(document).on('keyup', function(event) {
+		hitOnce[event.which] = 0;
+	});
+
+    
+
+        
+        
+        
+});     
+        
+</script>
